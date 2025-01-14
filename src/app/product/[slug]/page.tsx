@@ -7,7 +7,7 @@ import { FaStar } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const query = `*[_type=='product']{
+  const query = `*[_type=='product' && slug.current == $slug]{
     description, title, image, price, stock_availability, rating, tags, content, "slug": slug.current
   }`;
 
