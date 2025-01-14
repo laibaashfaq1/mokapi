@@ -1,4 +1,16 @@
 import { client } from "@/sanity/lib/client";
+
+interface ProductDetail {
+  description: string;
+  title: string;
+  image: string;
+  price: number;
+  stock_availability: string;
+  rating: number;
+  tags: string[];
+  content: any;
+  slug: string;
+}
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { PortableText } from "next-sanity";
@@ -11,14 +23,13 @@ export default async function Page({ params }: { params: { slug: string } }) {
     description, title, image, price, stock_availability, rating, tags, content, "slug": slug.current
   }`;
 
-  // Fetch the data directly in the component
-  const product = await client.fetch(query, { slug: params.slug });
+  const products: ProductDetail[] = await client.fetch(query, { slug: params.slug });
 
-  if (!product.length) {
+  if (!products.length) {
     return <div>Product not found</div>;
   }
 
-  const Productdet = product[0];
+  const product = products[0];
 
   return (
     <article className="mt-12 mb-24 px-4 sm:px-6 md:px-8 lg:px-12 flex justify-center">
@@ -29,7 +40,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           {/* Product Image */}
           <div className="w-full sm:w-1/2">
             <Image
-              src={urlFor(Productdet.image).url()}
+              src={urlFor(product.image).url()}
               width={800}
               height={600}
               alt="Product Image"
@@ -41,7 +52,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
           {/* Product Details */}
           <div className="flex-1">
-            <h1 className="text-5xl font-bold text-gray-900">{Productdet.title}</h1>
+            <h1 className="text-5xl font-bold text-gray-900">{product.title}</h1>
 
             {/* Reviews */}
             <div className="flex items-center my-2">
@@ -51,14 +62,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
               <FaStar className="text-yellow-500 font-bold"/>
               <FaStar className="text-gray-500 font-bold"/>
               <span className="text-sm text-gray-600 ml-2">
-                {Productdet.rating} reviews
+                {product.rating} reviews
                 </span>
             </div>
 
-            <p className="text-lg text-gray-700 my-4">{Productdet.description}</p>
-            <p className="text-3xl font-semibold text-green-600">Rs {Productdet.price}</p>
+            <p className="text-lg text-gray-700 my-4">{product.description}</p>
+            <p className="text-3xl font-semibold text-green-600">Rs {product.price}</p>
             <p className="mt-4 text-sm text-gray-600">
-              Stock Availability: {Productdet.stock_availability}
+              Stock Availability: {product.stock_availability}
             </p>
             
             {/* Add to Cart Button */}
@@ -69,7 +80,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
             {/* Tags */}
             <div className="mt-4"> 
-                {Productdet.tags.map((tag: string) => ( 
+                {product.tags.map((tag: string) => ( 
                 <span key={tag} 
                 className="inline-block bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold mr-2"> 
                 {tag} 
@@ -82,10 +93,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
        
       {/* Additional Content */}
       <div className="text-lg text-normal text-black dark:text-white mt-8">
-        {Productdet.content && (
-          <PortableText value={Productdet.content} components={components} />
+        {product.content && (
+          <PortableText value={product.content} components={components} />
         )}
       </div>
     </article>
   );
 }
+
+
