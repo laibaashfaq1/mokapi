@@ -1,4 +1,4 @@
-import { defineType,defineField,defineArrayMember } from "sanity";
+import { defineType,defineField } from "sanity";
 
 export const product = defineType ({
     name: 'product',
@@ -55,9 +55,30 @@ export const product = defineType ({
         title: 'Product Image',
         options: {
           hotspot: true // Enables cropping and focal point selection
-        }
-      })
-    
+        },
+      },),
+      defineField(
+        {
+            name:'slug',
+            type:'slug',
+            title:'Slug',
+            options:{
+                source:'title',
+                maxLength:96
+            },
+            validation:Rule => Rule.required()
+        },
+      ),
+    //   defineField({
+    //     name:'content',
+    //     type:'array',
+    //     title:'Content',
+    //     of:[
+    //         defineArrayMember({
+    //             type:'block'
+    //         })
+    //     ]
+    // }),
       //if you have this so you can  un comment this
     
     //   {
